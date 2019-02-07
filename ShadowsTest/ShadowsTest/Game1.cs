@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -11,11 +12,13 @@ namespace ShadowsTest
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Spotlight light;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            light = new Spotlight(new Vector2(0, 0), (float)(Math.PI / 4), 6, 3);
         }
 
         /// <summary>
@@ -63,6 +66,7 @@ namespace ShadowsTest
                 Exit();
 
             // TODO: Add your update logic here
+            light.Update();
 
             base.Update(gameTime);
         }
