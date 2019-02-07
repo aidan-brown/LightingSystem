@@ -18,7 +18,7 @@ namespace ShadowsTest
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            light = new Spotlight(new Vector2(0, 0), (float)(Math.PI / 4), 6, 3);
+            light = new Spotlight(new Vector2(0, 0), 45, 6, 3);
         }
 
         /// <summary>
