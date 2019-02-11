@@ -1,2 +1,3 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"D:/Profiles/afb3535/source/repos/ShadowsTest/ShadowsTest/Content/platform.png","D:/Profiles/afb3535/source/repos/ShadowsTest/ShadowsTest/Content/bin/Windows/platform.xnb","TextureProcessor","Texture2DContent",593,120085,0.3072906
+"D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/pixel.png","D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/bin/Windows/pixel.xnb","TextureProcessor","Texture2DContent",119,89,0.3060784
+"D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/platform.png","D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/bin/Windows/platform.xnb","TextureProcessor","Texture2DContent",593,120085,0.0110012

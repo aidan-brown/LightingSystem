@@ -13,12 +13,13 @@ namespace ShadowsTest
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Spotlight light;
+        Texture2D pixel;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            light = new Spotlight(new Vector2(0, 0), 45, 6, 3);
+            
         }
 
         /// <summary>
@@ -42,6 +43,8 @@ namespace ShadowsTest
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            pixel = Content.Load<Texture2D>("pixel");
+            light = new Spotlight(new Vector2(GraphicsDevice.Viewport.X / 2, GraphicsDevice.Viewport.Y / 2), 45, 6, 3);
 
             // TODO: use this.Content to load your game content here
         }
@@ -80,6 +83,19 @@ namespace ShadowsTest
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            for(int x = 0; x < GraphicsDevice.Viewport.X; x++)
+            {
+                for(int y = 0; y < GraphicsDevice.Viewport.Y; y++)
+                {
+                    if (Spotlight.WithinSpotlight(light, new Vector2(x, y)))
+                    {
+                        Console.WriteLine("Draw");
+                        spriteBatch.Draw(pixel, new Rectangle(x, y, 1, 1), Color.Black);
+                    }
+                }
+            }
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

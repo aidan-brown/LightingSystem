@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/platform.png</SourceFile>
-  <SourceTime>2019-02-11T13:01:04.2086708-05:00</SourceTime>
-  <DestFile>D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/bin/Windows/Content/platform.xnb</DestFile>
-  <DestTime>2019-02-11T14:18:56.2315899-05:00</DestTime>
+  <SourceFile>D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/pixel.png</SourceFile>
+  <SourceTime>2019-02-11T14:14:39.1011033-05:00</SourceTime>
+  <DestFile>D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/bin/Windows/Content/pixel.xnb</DestFile>
+  <DestTime>2019-02-11T14:18:56.2065966-05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2018-12-08T11:35:54-05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
