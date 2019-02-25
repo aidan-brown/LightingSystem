@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,12 +15,14 @@ namespace ShadowsTest
         SpriteBatch spriteBatch;
         Spotlight light;
         Texture2D pixel;
+        int x = 0, y = 0;
+        List<Vector2> positions;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            
+            positions = new List<Vector2>();
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace ShadowsTest
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = Content.Load<Texture2D>("pixel");
-            light = new Spotlight(new Vector2(GraphicsDevice.Viewport.X / 2, GraphicsDevice.Viewport.Y / 2), 45, 6, 3);
+            light = new Spotlight(new Vector2(0,0), 315, 500, 50);
 
             // TODO: use this.Content to load your game content here
         }
@@ -70,6 +73,24 @@ namespace ShadowsTest
 
             // TODO: Add your update logic here
             light.Update();
+            Vector2 point = new Vector2(x, y);
+            if (Spotlight.WithinSpotlight(light, point))
+            {
+                positions.Add(point);
+                Console.WriteLine("Added point");
+            }
+            
+            if(x < GraphicsDevice.Viewport.Width)
+            {
+                Console.WriteLine("x++");
+                x++;
+            }
+            else if(y < GraphicsDevice.Viewport.Height)
+            {
+                Console.WriteLine("y++");
+                x = 0;
+                y++;
+            }
 
             base.Update(gameTime);
         }
@@ -84,16 +105,10 @@ namespace ShadowsTest
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            for(int x = 0; x < GraphicsDevice.Viewport.X; x++)
+            foreach(Vector2 pos in positions)
             {
-                for(int y = 0; y < GraphicsDevice.Viewport.Y; y++)
-                {
-                    if (Spotlight.WithinSpotlight(light, new Vector2(x, y)))
-                    {
-                        Console.WriteLine("Draw");
-                        spriteBatch.Draw(pixel, new Rectangle(x, y, 1, 1), Color.Black);
-                    }
-                }
+                Console.WriteLine("Drawing...");
+                spriteBatch.Draw(pixel, pos, Color.Black);
             }
             spriteBatch.End();
 
