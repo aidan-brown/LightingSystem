@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ShadowsTest
 {
@@ -13,6 +14,7 @@ namespace ShadowsTest
         private float alpha, tanTheta, tanThetaPlusAlpha, tanThetaMinusAlpha, intercept;
         private Vector2 pos;
         private float rotation;
+        private Texture2D t;
 
         public Vector2 Position
         {
@@ -51,12 +53,13 @@ namespace ShadowsTest
             get { return intercept; }
         }
 
-        public Spotlight(Vector2 init, float rot, int l, int w)
+        public Spotlight(Vector2 init, float rot, int l, int w, Texture2D _t)
         {
             pos = init;
             rotation = (float)(rot * (Math.PI / 180));
             length = l;
             width = w;
+            t = _t;
         }
 
         public void Update()
@@ -68,142 +71,144 @@ namespace ShadowsTest
             intercept = (float)(Length / Math.Cos(Math.PI / 2 + Rotation));
         }
 
+        public void Draw(SpriteBatch sb)
+        {
+            sb.Draw(t, pos, Color.Black);
+        }
+
         public static bool WithinSpotlight(Spotlight light, Vector2 point)
         {
-            if (light.Rotation != 0 && light.Rotation != Math.PI)
+            float q1 = ((-1 / light.tanTheta) * (point.X - light.Position.X)) + light.intercept + light.Position.Y;
+            float q2 = light.tanThetaPlusAlpha * (point.Y - light.Position.X) + light.Position.Y;
+            float q3 = light.tanThetaMinusAlpha * (point.Y - light.Position.X) + light.Position.Y;
+
+
+        }
+
+        public static bool WithinSpotlight(Spotlight light, Platform platform)
+        {
+            Vector2 point;
+            for (int i = 0; i < 4; i++)
             {
-                if(light.Rotation > Math.PI)
+                switch(i)
                 {
-                    if(light.Rotation + light.Alpha < Math.PI / 2 && light.Rotation + light.Alpha > (3 * Math.PI) / 2)
+                    case 0:
+                        point = platform.PointNW;
+                        break;
+
+                    case 1:
+                        point = platform.PointNE;
+                        break;
+
+                    case 2:
+                        point = platform.PointSW;
+                        break;
+
+                    case 3:
+                        point = platform.PointSE;
+                        break;
+
+                    default:
+                        point = new Vector2(0, 0);
+                        break;
+                }
+
+                if (light.Rotation != 0 && light.Rotation != Math.PI)
+                {
+                    if (light.Rotation > Math.PI)
                     {
-                        if(light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
+                        if (light.Rotation + light.Alpha < Math.PI / 2 && light.Rotation + light.Alpha > (3 * Math.PI) / 2)
                         {
-                            if((point.Y <= -(1/light.TanTheta) * (point.X - light.Position.X) + light.Intercept + light.Position.Y) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                            if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
                             {
-                                return true;
+                                if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Intercept + light.Position.Y) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                             else
                             {
-                                return false;
+                                if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Intercept + light.Position.Y) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                         }
                         else
                         {
-                            if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Intercept + light.Position.Y) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                            if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
                             {
-                                return true;
+                                if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Intercept + light.Position.Y) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                             else
                             {
-                                return false;
+                                if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
                     else
                     {
-                        if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
+                        if (light.Rotation + light.Alpha < Math.PI / 2 && light.Rotation + light.Alpha > (3 * Math.PI) / 2)
                         {
-                            if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Intercept + light.Position.Y) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                            if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
                             {
-                                return true;
+                                if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                             else
                             {
-                                return false;
+                                if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                         }
                         else
                         {
-                            if ((point.Y <= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                            if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
                             {
-                                return true;
+                                if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                             else
                             {
-                                return false;
+                                if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
+                                {
+                                    return true;
+                                }
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (light.Rotation + light.Alpha < Math.PI / 2 && light.Rotation + light.Alpha > (3 * Math.PI) / 2)
+                    if (light.Rotation == 0)
                     {
-                        if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
+                        if ((point.X <= light.Position.X + light.Length) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
                         {
-                            if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
                         }
                     }
                     else
                     {
-                        if (light.Rotation - light.Alpha < Math.PI / 2 && light.Rotation - light.Alpha > (3 * Math.PI) / 2)
+                        if ((point.X >= light.Position.X - light.Length) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
                         {
-                            if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            if ((point.Y >= -(1 / light.TanTheta) * (point.X - light.Position.X) + light.Position.Y + light.Intercept) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
                         }
                     }
                 }
             }
-            else
-            {
-                if(light.Rotation == 0)
-                {
-                    if ((point.X <= light.Position.X + light.Length) && (point.Y <= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y >= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if ((point.X >= light.Position.X - light.Length) && (point.Y >= light.TanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y) && (point.Y <= light.TanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
+            return false;
         }
     }
 }

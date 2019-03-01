@@ -14,15 +14,37 @@ namespace ShadowsTest
         Rectangle rect, shadowRect;
         Texture2D texture;
         float lightRot;
-        SpriteBatch sb;
+
+        Vector2 pNW, pNE, pSW, pSE;
+
+        public Vector2 PointNW
+        {
+            get { return pNW; }
+        }
+        public Vector2 PointNE
+        {
+            get { return pNE; }
+        }
+        public Vector2 PointSW
+        {
+            get { return pSW; }
+        }
+        public Vector2 PointSE
+        {
+            get { return pSE; }
+        }
 
         public bool isInLight;
 
-        public Platform(Rectangle r, Texture2D t, SpriteBatch s)
+        public Platform(Rectangle r, Texture2D t)
         {
             rect = r;
             texture = t;
-            sb = s;
+
+            pNW = new Vector2(r.X, r.Y);
+            pNE = new Vector2(r.X + r.Width, r.Y);
+            pSW = new Vector2(r.X, r.Y + r.Height);
+            pSE = new Vector2(r.X + r.Width, r.Y + r.Height);
         }
 
         public void Update(float light)
@@ -34,7 +56,7 @@ namespace ShadowsTest
             }
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch sb)
         { 
             if(isInLight)
             {

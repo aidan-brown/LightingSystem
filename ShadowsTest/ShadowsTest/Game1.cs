@@ -17,6 +17,9 @@ namespace ShadowsTest
         Texture2D pixel;
         int x = 0, y = 0;
         List<Vector2> positions;
+        Platform platform;
+
+
 
         public Game1()
         {
@@ -47,7 +50,8 @@ namespace ShadowsTest
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = Content.Load<Texture2D>("pixel");
-            light = new Spotlight(new Vector2(0,0), 315, 500, 50);
+            light = new Spotlight(new Vector2(50, 50), 315, 1000, 500, pixel);
+            platform = new Platform(new Rectangle(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2, 60, 20), Content.Load<Texture2D>("platform"));
 
             // TODO: use this.Content to load your game content here
         }
@@ -73,24 +77,8 @@ namespace ShadowsTest
 
             // TODO: Add your update logic here
             light.Update();
-            Vector2 point = new Vector2(x, y);
-            if (Spotlight.WithinSpotlight(light, point))
-            {
-                positions.Add(point);
-                Console.WriteLine("Added point");
-            }
-            
-            if(x < GraphicsDevice.Viewport.Width)
-            {
-                Console.WriteLine("x++");
-                x++;
-            }
-            else if(y < GraphicsDevice.Viewport.Height)
-            {
-                Console.WriteLine("y++");
-                x = 0;
-                y++;
-            }
+            platform.isInLight = Spotlight.WithinSpotlight(light, platform);
+            Console.WriteLine(Spotlight.WithinSpotlight(light, platform));
 
             base.Update(gameTime);
         }
@@ -105,11 +93,8 @@ namespace ShadowsTest
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            foreach(Vector2 pos in positions)
-            {
-                Console.WriteLine("Drawing...");
-                spriteBatch.Draw(pixel, pos, Color.Black);
-            }
+            platform.Draw(spriteBatch);
+            light.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
