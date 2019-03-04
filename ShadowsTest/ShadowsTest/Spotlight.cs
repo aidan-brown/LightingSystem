@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace ShadowsTest
 {
@@ -64,6 +65,16 @@ namespace ShadowsTest
 
         public void Update()
         {
+            rotation = (float)Math.Atan((Mouse.GetState().Position.Y - pos.Y) / (Mouse.GetState().Position.X - pos.X));
+            if(Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                pos.Y -= 3;
+            }
+            if(Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                pos.Y += 3;
+            }
+
             alpha = (float)Math.Atan(Width / Length);
             tanTheta = (float)Math.Tan(Rotation);
             tanThetaPlusAlpha = (float)Math.Tan(Rotation + alpha);

@@ -33,6 +33,10 @@ namespace ShadowsTest
         {
             get { return pSE; }
         }
+        private Vector2 MidPoint
+        {
+            get { return new Vector2(rect.X + rect.Width / 2, rect.Y + rect.Height / 2); }
+        }
 
         public bool isInLight;
 
@@ -47,12 +51,12 @@ namespace ShadowsTest
             pSE = new Vector2(r.X + r.Width, r.Y + r.Height);
         }
 
-        public void Update(float light)
+        public void Update(float _lightRot)
         {
             if (isInLight)
             {
-                shadowRect = new Rectangle(rect.X + rect.Width / 2, rect.Y + rect.Height / 2, rect.Width * 4, (int)Math.Sqrt(Math.Pow(rect.Width, 2) + Math.Pow(rect.Height, 2)));
-                lightRot = light;
+                shadowRect = new Rectangle((int)MidPoint.X, (int)MidPoint.Y, rect.Width * 4, (int)Math.Sqrt(Math.Pow(rect.Width, 2) + Math.Pow(rect.Height, 2)));
+                lightRot = _lightRot;
             }
         }
 
@@ -60,7 +64,7 @@ namespace ShadowsTest
         { 
             if(isInLight)
             {
-                sb.Draw(texture, destinationRectangle: shadowRect, color: Color.Black, rotation: lightRot);
+                sb.Draw(texture, destinationRectangle: shadowRect, color: Color.Black, rotation: lightRot, origin: new Vector2(0, texture.Height/2));
             }
             sb.Draw(texture, rect, Color.White);
         }

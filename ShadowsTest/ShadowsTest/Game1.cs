@@ -50,8 +50,8 @@ namespace ShadowsTest
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = Content.Load<Texture2D>("pixel");
-            light = new Spotlight(new Vector2(0, 0), 315, 500, 250, pixel);
-            platform = new Platform(new Rectangle(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2, 60, 20), Content.Load<Texture2D>("platform"));
+            light = new Spotlight(new Vector2(5, 0), 315, 500, 250, pixel);
+            platform = new Platform(new Rectangle(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2, 60, 60), Content.Load<Texture2D>("platform"));
 
             // TODO: use this.Content to load your game content here
         }
