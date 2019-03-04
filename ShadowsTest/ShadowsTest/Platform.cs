@@ -51,7 +51,7 @@ namespace ShadowsTest
         {
             if (isInLight)
             {
-                shadowRect = new Rectangle(rect.X + texture.Width / 2, rect.Y + texture.Height / 2, rect.Width * 4, (int)Math.Sqrt(Math.Pow(rect.Width, 2) + Math.Pow(rect.Height, 2)));
+                shadowRect = new Rectangle(rect.X + rect.Width / 2, rect.Y + rect.Height / 2, rect.Width * 4, (int)Math.Sqrt(Math.Pow(rect.Width, 2) + Math.Pow(rect.Height, 2)));
                 lightRot = light;
             }
         }
@@ -60,7 +60,7 @@ namespace ShadowsTest
         { 
             if(isInLight)
             {
-                sb.Draw(texture, destinationRectangle: shadowRect, color: Color.Black, origin: new Vector2(0, rect.Height / 2));
+                sb.Draw(texture, destinationRectangle: shadowRect, color: Color.Black, rotation: lightRot);
             }
             sb.Draw(texture, rect, Color.White);
         }
