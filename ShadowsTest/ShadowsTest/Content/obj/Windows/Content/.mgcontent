@@ -4,8 +4,8 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/pixel.png</File>
-    <File>D:/Profiles/afb3535/Documents/GitLab/LightingSystem/ShadowsTest/ShadowsTest/Content/platform.png</File>
+    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/pixel.png</File>
+    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/platform.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

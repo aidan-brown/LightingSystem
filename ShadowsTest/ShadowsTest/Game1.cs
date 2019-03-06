@@ -15,9 +15,14 @@ namespace ShadowsTest
         SpriteBatch spriteBatch;
         Spotlight light;
         Texture2D pixel;
-        int x = 0, y = 0;
-        List<Vector2> positions;
         Platform platform;
+        VertexBuffer vertexBuffer;
+
+        BasicEffect basicEffect;
+        Matrix world = Matrix.CreateTranslation(0, 0, 0);
+        Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+        Matrix projection;
+        Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
 
 
 
@@ -25,7 +30,6 @@ namespace ShadowsTest
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            positions = new List<Vector2>();
         }
 
         /// <summary>
@@ -39,6 +43,10 @@ namespace ShadowsTest
             // TODO: Add your initialization logic here
 
             base.Initialize();
+
+            basicEffect = new BasicEffect(GraphicsDevice);
+            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 4, BufferUsage.WriteOnly);
+            projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, 1);
         }
 
         /// <summary>
@@ -50,8 +58,8 @@ namespace ShadowsTest
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = Content.Load<Texture2D>("pixel");
-            light = new Spotlight(new Vector2(5, 0), 315, 500, 250, pixel);
-            platform = new Platform(new Rectangle(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2, 60, 60), Content.Load<Texture2D>("platform"));
+            light = new Spotlight(new Vector2(5, 0), 1, 1000, 750, pixel);
+            platform = new Platform(new Rectangle(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2, 60, 60), Content.Load<Texture2D>("platform"), GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
         }
@@ -78,7 +86,7 @@ namespace ShadowsTest
             // TODO: Add your update logic here
             light.Update();
             platform.isInLight = Spotlight.WithinSpotlight(light, platform);
-            platform.Update(light.Rotation);
+            platform.Update(light);
 
             base.Update(gameTime);
         }
@@ -91,9 +99,19 @@ namespace ShadowsTest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.Identity;
+            basicEffect.Projection = projection;
+            basicEffect.VertexColorEnabled = true;
+
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            platform.Draw(spriteBatch);
+            platform.Draw(spriteBatch, basicEffect, GraphicsDevice, vertexBuffer);
             light.Draw(spriteBatch);
             spriteBatch.End();
 

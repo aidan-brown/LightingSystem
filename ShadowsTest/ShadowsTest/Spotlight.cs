@@ -65,14 +65,14 @@ namespace ShadowsTest
 
         public void Update()
         {
-            rotation = (float)Math.Atan((Mouse.GetState().Position.Y - pos.Y) / (Mouse.GetState().Position.X - pos.X));
+            //rotation = (float)Math.Atan((Mouse.GetState().Position.Y - pos.Y) / (Mouse.GetState().Position.X - pos.X));
             if(Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                pos.Y -= 3;
+                pos.Y -= 1;
             }
             if(Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                pos.Y += 3;
+                pos.Y += 1;
             }
 
             alpha = (float)Math.Atan(Width / Length);
