@@ -13,10 +13,11 @@ namespace ShadowsTest
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        PointLight light;
         Texture2D pixel;
         List<Platform> platforms;
+        List<Light> lights;
         VertexBuffer vertexBuffer;
+        Rectangle rect;
 
         BasicEffect basicEffect;
         Matrix world = Matrix.CreateTranslation(0, 0, 0);
@@ -31,6 +32,8 @@ namespace ShadowsTest
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             platforms = new List<Platform>();
+            lights = new List<Light>();
+            rect = new Rectangle(250, 350, 5, 5);
         }
 
         /// <summary>
@@ -59,10 +62,11 @@ namespace ShadowsTest
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = Content.Load<Texture2D>("pixel");
-            light = new PointLight(new Vector2(0, 0), 100, Content.Load<Texture2D>("point"));
-            for(int i = 0; i < 5; i++)
+            lights.Add(new PointLight(new Vector2(0, 0), 100, Content.Load<Texture2D>("point")));
+            //lights.Add(new PointLight(new Vector2(200, 0), 100, Content.Load<Texture2D>("point")));
+            for (int i = 0; i < 1; i++)
             {
-                platforms.Add(new Platform(new Rectangle(0 + i * 60, 250, 50, 50), Content.Load<Texture2D>("platform"), GraphicsDevice));
+                platforms.Add(new Platform(new Rectangle(250 + i * 60, 250, 50, 50), Content.Load<Texture2D>("platform"), GraphicsDevice));
             }
 
             // TODO: use this.Content to load your game content here
@@ -88,12 +92,17 @@ namespace ShadowsTest
                 Exit();
 
             // TODO: Add your update logic here
-            light.Update();
-            light.IsWithinLight(platforms);
+            foreach (Light light in lights)
+            {
+                light.Update();
+            }
+            
             foreach(Platform platform in platforms)
             {
-                platform.Update(light);
+                platform.Update(lights);
             }
+
+            Platform.UpdateShadows();
 
             base.Update(gameTime);
         }
@@ -115,14 +124,35 @@ namespace ShadowsTest
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
 
+            bool check = false;
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            light.Draw(spriteBatch);
+            foreach (Light light in lights)
+            {
+                light.Draw(spriteBatch);
+            }
             foreach (Platform platform in platforms)
             {
-                platform.Draw(spriteBatch, basicEffect, GraphicsDevice, vertexBuffer);
+                platform.Draw(spriteBatch);
             }
+            foreach(Shadow shadow in Platform.GlobalShadows)
+            {
+                if(shadow.WithinShadow(rect))
+                {
+                    check = true;
+                    break;
+                }
+            }
+            if(check)
+            {
+                spriteBatch.Draw(Content.Load<Texture2D>("platform"), rect, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(Content.Load<Texture2D>("platform"), rect, Color.Black);
+            }
+            Platform.DrawShadows(basicEffect, GraphicsDevice, vertexBuffer);
             spriteBatch.End();
 
             base.Draw(gameTime);

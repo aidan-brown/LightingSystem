@@ -12,9 +12,13 @@ namespace ShadowsTest
     class Platform
     {
         private List<Vector2> points;
+        private List<Light> lights;
+        private List<Shadow> shadows;
         private Rectangle rect;
-        private Shadow shadow;
         private Texture2D texture;
+        private bool isInLight;
+
+        public static List<Shadow> GlobalShadows = new List<Shadow>();
 
         Vector2 pNW, pNE, pSW, pSE;
 
@@ -42,8 +46,10 @@ namespace ShadowsTest
         {
             get { return points; }
         }
-
-        public bool isInLight;
+        public Rectangle Rect
+        {
+            get { return rect; }
+        }
 
         public Platform(Rectangle r, Texture2D t, GraphicsDevice gd)
         {
@@ -55,74 +61,135 @@ namespace ShadowsTest
             pSW = new Vector2(r.X, r.Y + r.Height);
             pSE = new Vector2(r.X + r.Width, r.Y + r.Height);
 
-            shadow = new Shadow(pSW, pNE, 500);
-
             points = new List<Vector2>();
             points.Add(pNW);
             points.Add(pNE);
             points.Add(pSW);
             points.Add(pSE);
+
+            lights = new List<Light>();
+            shadows = new List<Shadow>();
         }
 
         public Platform()
         { }
 
-        public void Update(Light light)
+        public void Update(List<Light> sceneLights)
         {
-            if (isInLight)
+            bool hasChanged = false;
+            foreach (Light light in sceneLights)
             {
-                Vector2 p1 = new Vector2(), p2 = new Vector2();
-
-                p1 = FindFurthestPoint(points, light);
-
-                if (p1 == pNE)
+                if (!hasChanged)
                 {
-                    p2 = pSW;
+                    hasChanged = IsInLight(light.IsWithinLight(this), light);
                 }
-                else if(p1 == pNW)
+                else
                 {
-                    p2 = pSE;
+                    IsInLight(light.IsWithinLight(this), light);
                 }
-                else if (p1 == pSW)
+            }
+            if (hasChanged)
+            {
+                foreach (Light light in lights)
                 {
-                    p2 = pNE;
+                    if (isInLight && !DoesShadowsContainLight(light))
+                    {
+                        GlobalShadows.Add(new Shadow(light, this));
+                        shadows.Add(new Shadow(light, this));
+                    }
                 }
-                else if (p1 == pSE)
-                {
-                    p2 = pNW;
-                }
-                shadow.FindShadow(p1, p2, light, this);
             }
         }
 
-        public void Draw(SpriteBatch sb, BasicEffect basicEffect, GraphicsDevice graphicsDevice, VertexBuffer vertexBuffer)
+        public void Draw(SpriteBatch sb)
         { 
-            if(isInLight)
-            {
-                shadow.Draw(basicEffect, graphicsDevice, vertexBuffer);
-            }
             sb.Draw(texture, rect, Color.White);
         }
 
-        private Vector2 FindFurthestPoint(List<Vector2> points, Light light)
+        public bool IsInLight(bool isInLight, Light light)
         {
-            float maxValue = 0;
-            Vector2 maxPoint = new Vector2();
-
-            foreach (Vector2 point in points)
+            if(isInLight)
             {
-                float theta = Shadow.AngleFromPointToPoint(light.GlobalPosition, MidPoint);
-                float alpha = Shadow.AngleFromPointToPoint(light.GlobalPosition, point);
-                float phi = Math.Abs(theta - alpha);
-                float d = (float)Math.Sqrt(Math.Pow(point.Y - light.GlobalPosition.Y, 2) + Math.Pow(point.X - light.GlobalPosition.X, 2));
-
-                if(maxValue < d * Math.Sin(phi))
+                this.isInLight = true;
+                if (!lights.Contains(light))
                 {
-                    maxValue = (float)(d * Math.Sin(phi));
-                    maxPoint = point;
+                    lights.Add(light);
+                    return true;
                 }
             }
-            return maxPoint;
+            else
+            {
+                if (lights.Contains(light))
+                {
+                    lights.RemoveAt(lights.IndexOf(light));
+                    GlobalShadows.RemoveAt(IndexOfLightInGlobalShadows(light));
+                    shadows.RemoveAt(IndexOfLightInShadows(light));
+                    if (lights.Count <= 0)
+                    {
+                        this.isInLight = false;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool DoesShadowsContainLight(Light light)
+        {
+            foreach(Shadow shadow in shadows)
+            {
+                if(shadow.Light == light)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static int IndexOfLightInGlobalShadows(Light light)
+        {
+            if (GlobalShadows.Count > 0)
+            {
+                for (int i = 0; i < GlobalShadows.Count; i++)
+                {
+                    if (GlobalShadows.ElementAt(i).Light == light)
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        private int IndexOfLightInShadows(Light light)
+        {
+            if (shadows.Count > 0)
+            {
+                for (int i = 0; i < shadows.Count; i++)
+                {
+                    if (shadows.ElementAt(i).Light == light)
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        public static void UpdateShadows()
+        {
+            foreach (Shadow shadow in GlobalShadows)
+            {
+                shadow.FindShadow();
+            }
+        }
+
+        public static void DrawShadows(BasicEffect basicEffect, GraphicsDevice graphicsDevice, VertexBuffer vertexBuffer)
+        {
+            foreach (Shadow shadow in GlobalShadows)
+            {
+                shadow.Draw(basicEffect, graphicsDevice, vertexBuffer);
+            }
         }
     }
 }

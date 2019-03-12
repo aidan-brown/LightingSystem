@@ -29,19 +29,19 @@ namespace ShadowsTest
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                globalPosition.Y -= 1;
+                globalPosition.Y -= 3;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                globalPosition.Y += 1;
+                globalPosition.Y += 3;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                globalPosition.X += 1;
+                globalPosition.X += 3;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                globalPosition.X -= 1;
+                globalPosition.X -= 3;
             }
         }
 
@@ -66,14 +66,6 @@ namespace ShadowsTest
                 }
             }
             return false;
-        }
-
-        public void IsWithinLight(List<Platform> platforms)
-        {
-            foreach(Platform platform in platforms)
-            {
-                platform.isInLight = IsWithinLight(platform);
-            }
         }
     }
 }
