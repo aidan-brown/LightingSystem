@@ -11,11 +11,10 @@ namespace ShadowsTest
 {
     class Platform
     {
-        List<Vector2> points;
-        Rectangle rect, shadowRect;
-        Shadow shadow;
-        Texture2D texture;
-        float lightRot;
+        private List<Vector2> points;
+        private Rectangle rect;
+        private Shadow shadow;
+        private Texture2D texture;
 
         Vector2 pNW, pNE, pSW, pSE;
 
@@ -39,6 +38,10 @@ namespace ShadowsTest
         {
             get { return new Vector2(rect.X + rect.Width / 2, rect.Y + rect.Height / 2); }
         }
+        public List<Vector2> Points
+        {
+            get { return points; }
+        }
 
         public bool isInLight;
 
@@ -52,7 +55,7 @@ namespace ShadowsTest
             pSW = new Vector2(r.X, r.Y + r.Height);
             pSE = new Vector2(r.X + r.Width, r.Y + r.Height);
 
-            shadow = new Shadow(pSW, pNE, 150);
+            shadow = new Shadow(pSW, pNE, 500);
 
             points = new List<Vector2>();
             points.Add(pNW);
@@ -64,16 +67,15 @@ namespace ShadowsTest
         public Platform()
         { }
 
-        public void Update(Spotlight light)
+        public void Update(Light light)
         {
             if (isInLight)
             {
                 Vector2 p1 = new Vector2(), p2 = new Vector2();
 
-                int i = FindFurthestPoint(points, light);
-                p1 = points.ElementAt(i);
-                
-                if(p1 == pNE)
+                p1 = FindFurthestPoint(points, light);
+
+                if (p1 == pNE)
                 {
                     p2 = pSW;
                 }
@@ -102,33 +104,25 @@ namespace ShadowsTest
             sb.Draw(texture, rect, Color.White);
         }
 
-        private int FindFurthestPoint(List<Vector2> points, Spotlight light)
+        private Vector2 FindFurthestPoint(List<Vector2> points, Light light)
         {
-            int maxDIndex = 0;
-            double maxD = 0;
-            Vector2 point;
-            for (int i = 0; i < points.Count; i++)
-            {
-                point = points.ElementAt(i);
-                if (point.X != light.Position.X || point.Y != light.Position.Y)
-                {
-                    double m = Shadow.AngleFromPointToPoint(point, light.Position);
-                    Vector2 poi = new Vector2((float)((Math.Pow(m, 2) * light.Position.X + point.X + m * point.Y - m * light.Position.Y) / (Math.Pow(m, 2) - 1)), (float)((point.X / m) - ((Math.Pow(m, 2) * light.Position.X + point.X + m * point.Y - m * light.Position.Y) / (Math.Pow(m, 3) - m)) + point.Y));
+            float maxValue = 0;
+            Vector2 maxPoint = new Vector2();
 
-                    double q1 = Math.Sqrt(Math.Pow(poi.Y - point.Y, 2) + Math.Pow(poi.X - point.X, 2));
-                    if (maxD < q1)
-                    {
-                        maxD = q1;
-                        maxDIndex = i;
-                    }
-                }
-                else
+            foreach (Vector2 point in points)
+            {
+                float theta = Shadow.AngleFromPointToPoint(light.GlobalPosition, MidPoint);
+                float alpha = Shadow.AngleFromPointToPoint(light.GlobalPosition, point);
+                float phi = Math.Abs(theta - alpha);
+                float d = (float)Math.Sqrt(Math.Pow(point.Y - light.GlobalPosition.Y, 2) + Math.Pow(point.X - light.GlobalPosition.X, 2));
+
+                if(maxValue < d * Math.Sin(phi))
                 {
-                    return i;
+                    maxValue = (float)(d * Math.Sin(phi));
+                    maxPoint = point;
                 }
             }
-
-            return maxDIndex;
+            return maxPoint;
         }
     }
 }

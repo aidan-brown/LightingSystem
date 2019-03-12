@@ -72,3 +72,5 @@ D:\Profiles\afb3535\Documents\GitLab\LightingSystem\ShadowsTest\ShadowsTest\obj\
 D:\Profiles\afb3535\Documents\GitLab\LightingSystem\ShadowsTest\ShadowsTest\obj\x86\Debug\ShadowsTest.exe
 D:\Profiles\afb3535\Documents\GitLab\LightingSystem\ShadowsTest\ShadowsTest\obj\x86\Debug\ShadowsTest.pdb
 C:\Users\Aidan's_9th_Laptop\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\pixel.xnb
+C:\Users\Aidan's_9th_Laptop\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\spot.xnb
+C:\Users\Aidan's_9th_Laptop\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\point.xnb

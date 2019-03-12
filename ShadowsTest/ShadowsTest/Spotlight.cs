@@ -9,18 +9,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ShadowsTest
 {
-    class Spotlight
+    class Spotlight : Light
     {
         private float length, width;
         private float alpha, tanTheta, tanThetaPlusAlpha, tanThetaMinusAlpha, intercept;
-        private Vector2 pos;
         private float rotation;
         private Texture2D t;
 
-        public Vector2 Position
-        {
-            get { return pos; }
-        }
         public float Rotation
         {
             get { return rotation; }
@@ -54,25 +49,32 @@ namespace ShadowsTest
             get { return intercept; }
         }
 
-        public Spotlight(Vector2 init, float rot, int l, int w, Texture2D _t)
+        public Spotlight(Vector2 init, float rot, int l, int w, Texture2D _t) : base(init)
         {
-            pos = init;
             rotation = (float)(rot * (Math.PI / 180));
             length = l;
             width = w;
             t = _t;
         }
 
-        public void Update()
+        public override void Update()
         {
-            //rotation = (float)Math.Atan((Mouse.GetState().Position.Y - pos.Y) / (Mouse.GetState().Position.X - pos.X));
+            rotation = Shadow.AngleFromPointToPoint(GlobalPosition, new Vector2(Mouse.GetState().Position.X, Mouse.GetState().Position.Y));
             if(Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                pos.Y -= 1;
+                globalPosition.Y -= 3;
             }
             if(Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                pos.Y += 1;
+                globalPosition.Y += 3;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                globalPosition.X += 3;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                globalPosition.X -= 3;
             }
 
             alpha = (float)Math.Atan(Width / Length);
@@ -82,24 +84,24 @@ namespace ShadowsTest
             intercept = (float)(Length / Math.Cos(Math.PI / 2 + Rotation));
         }
 
-        public void Draw(SpriteBatch sb)
+        public override void Draw(SpriteBatch sb)
         {
-            sb.Draw(t, pos, Color.Black);
+            sb.Draw(texture: t, destinationRectangle: new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)width, (int)length), origin: new Vector2(0, t.Height/2), rotation: rotation);
         }
 
-        public static bool WithinSpotlight(Spotlight light, Vector2 point)
+        public override bool IsWithinLight(Vector2 point)
         {
-            float q1 = ((-1 / light.tanTheta) * (point.X - light.Position.X)) + light.intercept + light.Position.Y;
-            float q2 = light.tanThetaPlusAlpha * (point.X - light.Position.X) + light.Position.Y;
-            float q3 = light.tanThetaMinusAlpha * (point.X - light.Position.X) + light.Position.Y;
+            float q1 = ((-1 / tanTheta) * (point.X - GlobalPosition.X)) + intercept + GlobalPosition.Y;
+            float q2 = tanThetaPlusAlpha * (point.X - GlobalPosition.X) + GlobalPosition.Y;
+            float q3 = tanThetaMinusAlpha * (point.X - GlobalPosition.X) + GlobalPosition.Y;
 
-            if(light.rotation != 0 && light.rotation != (Math.PI))
+            if(rotation != 0 && rotation != (Math.PI))
             {
-                if(light.rotation > 0 && light.rotation < Math.PI)
+                if(rotation > 0 && rotation < Math.PI)
                 {
-                    if((light.tanThetaPlusAlpha > 0 && light.tanThetaPlusAlpha < Math.PI/2) || (light.tanThetaPlusAlpha > Math.PI && light.tanThetaPlusAlpha < (3 * Math.PI) / 2))
+                    if((tanThetaPlusAlpha > 0 && tanThetaPlusAlpha < Math.PI/2) || (tanThetaPlusAlpha > Math.PI && tanThetaPlusAlpha < (3 * Math.PI) / 2))
                     {
-                        if ((light.tanThetaMinusAlpha > 0 && light.tanThetaMinusAlpha < Math.PI / 2) || (light.tanThetaMinusAlpha > Math.PI && light.tanThetaMinusAlpha < (3 * Math.PI) / 2))
+                        if ((tanThetaMinusAlpha > 0 && tanThetaMinusAlpha < Math.PI / 2) || (tanThetaMinusAlpha > Math.PI && tanThetaMinusAlpha < (3 * Math.PI) / 2))
                         {
                             if(point.Y >= q1 && point.Y <= q2 && point.Y <= q3)
                             {
@@ -124,7 +126,7 @@ namespace ShadowsTest
                     }
                     else
                     {
-                        if ((light.tanThetaMinusAlpha > 0 && light.tanThetaMinusAlpha < Math.PI / 2) || (light.tanThetaMinusAlpha > Math.PI && light.tanThetaMinusAlpha < (3 * Math.PI) / 2))
+                        if ((tanThetaMinusAlpha > 0 && tanThetaMinusAlpha < Math.PI / 2) || (tanThetaMinusAlpha > Math.PI && tanThetaMinusAlpha < (3 * Math.PI) / 2))
                         {
                             if (point.Y >= q1 && point.Y >= q2 && point.Y <= q3)
                             {
@@ -150,9 +152,9 @@ namespace ShadowsTest
                 }
                 else
                 {
-                    if ((light.tanThetaPlusAlpha > 0 && light.tanThetaPlusAlpha < Math.PI / 2) || (light.tanThetaPlusAlpha > Math.PI && light.tanThetaPlusAlpha < (3 * Math.PI) / 2))
+                    if ((tanThetaPlusAlpha > 0 && tanThetaPlusAlpha < Math.PI / 2) || (tanThetaPlusAlpha > Math.PI && tanThetaPlusAlpha < (3 * Math.PI) / 2))
                     {
-                        if ((light.tanThetaMinusAlpha > 0 && light.tanThetaMinusAlpha < Math.PI / 2) || (light.tanThetaMinusAlpha > Math.PI && light.tanThetaMinusAlpha < (3 * Math.PI) / 2))
+                        if ((tanThetaMinusAlpha > 0 && tanThetaMinusAlpha < Math.PI / 2) || (tanThetaMinusAlpha > Math.PI && tanThetaMinusAlpha < (3 * Math.PI) / 2))
                         {
                             if (point.Y <= q1 && point.Y <= q2 && point.Y <= q3)
                             {
@@ -177,7 +179,7 @@ namespace ShadowsTest
                     }
                     else
                     {
-                        if ((light.tanThetaMinusAlpha > 0 && light.tanThetaMinusAlpha < Math.PI / 2) || (light.tanThetaMinusAlpha > Math.PI && light.tanThetaMinusAlpha < (3 * Math.PI) / 2))
+                        if ((tanThetaMinusAlpha > 0 && tanThetaMinusAlpha < Math.PI / 2) || (tanThetaMinusAlpha > Math.PI && tanThetaMinusAlpha < (3 * Math.PI) / 2))
                         {
                             if (point.Y <= q1 && point.Y >= q2 && point.Y <= q3)
                             {
@@ -204,9 +206,9 @@ namespace ShadowsTest
             }
             else
             {
-                if(light.rotation == Math.PI)
+                if(rotation == Math.PI)
                 {
-                    if(point.Y <= light.length - light.pos.X && point.Y >= q2 && point.Y >= q3)
+                    if(point.Y <= length - GlobalPosition.X && point.Y >= q2 && point.Y >= q3)
                     {
                         return true;
                     }
@@ -217,7 +219,7 @@ namespace ShadowsTest
                 }
                 else
                 {
-                    if (point.Y >= light.length + light.pos.X && point.Y <= q2 && point.Y <= q3)
+                    if (point.Y >= length + GlobalPosition.X && point.Y <= q2 && point.Y <= q3)
                     {
                         return true;
                     }
@@ -229,7 +231,7 @@ namespace ShadowsTest
             }
         }
 
-        public static bool WithinSpotlight(Spotlight light, Platform platform)
+        public override bool IsWithinLight(Platform platform)
         {
             Vector2 point;
             for (int i = 0; i < 4; i++)
@@ -257,7 +259,7 @@ namespace ShadowsTest
                         break;
                 }
                 
-                if(WithinSpotlight(light, point))
+                if(IsWithinLight(point))
                 {
                     return true;
                 }

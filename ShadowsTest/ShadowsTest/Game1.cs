@@ -13,9 +13,9 @@ namespace ShadowsTest
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Spotlight light;
+        PointLight light;
         Texture2D pixel;
-        Platform platform;
+        List<Platform> platforms;
         VertexBuffer vertexBuffer;
 
         BasicEffect basicEffect;
@@ -30,6 +30,7 @@ namespace ShadowsTest
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            platforms = new List<Platform>();
         }
 
         /// <summary>
@@ -58,8 +59,11 @@ namespace ShadowsTest
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             pixel = Content.Load<Texture2D>("pixel");
-            light = new Spotlight(new Vector2(5, 0), 1, 1000, 750, pixel);
-            platform = new Platform(new Rectangle(GraphicsDevice.Viewport.Width/2, GraphicsDevice.Viewport.Height/2, 60, 60), Content.Load<Texture2D>("platform"), GraphicsDevice);
+            light = new PointLight(new Vector2(0, 0), 100, Content.Load<Texture2D>("point"));
+            for(int i = 0; i < 5; i++)
+            {
+                platforms.Add(new Platform(new Rectangle(0 + i * 60, 250, 50, 50), Content.Load<Texture2D>("platform"), GraphicsDevice));
+            }
 
             // TODO: use this.Content to load your game content here
         }
@@ -85,8 +89,11 @@ namespace ShadowsTest
 
             // TODO: Add your update logic here
             light.Update();
-            platform.isInLight = Spotlight.WithinSpotlight(light, platform);
-            platform.Update(light);
+            light.IsWithinLight(platforms);
+            foreach(Platform platform in platforms)
+            {
+                platform.Update(light);
+            }
 
             base.Update(gameTime);
         }
@@ -111,8 +118,11 @@ namespace ShadowsTest
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            platform.Draw(spriteBatch, basicEffect, GraphicsDevice, vertexBuffer);
             light.Draw(spriteBatch);
+            foreach (Platform platform in platforms)
+            {
+                platform.Draw(spriteBatch, basicEffect, GraphicsDevice, vertexBuffer);
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
