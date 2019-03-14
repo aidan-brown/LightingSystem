@@ -136,6 +136,13 @@ namespace ShadowsTest
                     }
                 }
 
+                if(p1.Y < p2.Y)
+                {
+                    Vector2 temp = p1;
+                    p1 = p2;
+                    p2 = temp;
+                }
+
                 float phiSlope = ((p1.Y - light.GlobalPosition.Y) / (p1.X - light.GlobalPosition.X));
                 Vector2 phiPoint = p1;
                 float alphaSlope = ((p2.Y - light.GlobalPosition.Y) / (p2.X - light.GlobalPosition.X));
@@ -255,16 +262,23 @@ namespace ShadowsTest
 
             if(light.GlobalPosition.Y > platform.MidPoint.Y)
             {
-                if(light.GlobalPosition.X > platform.MidPoint.X)
+                if(light.GlobalPosition.X > platform.MidPoint.X && light.GlobalPosition.Y < platform.Rect.Bottom)
                 {
-                    if(point.Y <= q1 && point.Y >= q2 && point.Y >= q3 && point.Y <= q4)
+                    if (point.Y >= q1 && point.Y >= q2 && point.Y <= q3 && point.Y >= q4)
+                    {
+                        return true;
+                    }
+                }
+                else if(p1.Y != p2.Y)
+                {
+                    if(point.Y <= q1 && point.Y >= q2 && point.Y <= q3 && point.Y >= q4)
                     {
                         return true;
                     }
                 }
                 else
                 {
-                    if (point.Y <= q1 && point.Y >= q2 && point.Y <= q3 && point.Y >= q4)
+                    if (point.Y <= q1 && point.Y >= q2 && point.Y <= q3 && point.Y <= q4)
                     {
                         return true;
                     }
@@ -272,16 +286,23 @@ namespace ShadowsTest
             }
             else
             {
-                if (light.GlobalPosition.X > platform.MidPoint.X)
+                if (light.GlobalPosition.X < platform.MidPoint.X && light.GlobalPosition.Y > platform.Rect.Top)
                 {
-                    if (point.Y >= q1 && point.Y <= q2 && point.Y >= q3 && point.Y <= q4)
+                    if (point.Y >= q1 && point.Y >= q2 && point.Y <= q3 && point.Y >= q4)
+                    {
+                        return true;
+                    }
+                }
+                else if (p1.Y != p2.Y)
+                {
+                    if (point.Y >= q1 && point.Y <= q2 && point.Y <= q3 && point.Y >= q4)
                     {
                         return true;
                     }
                 }
                 else
                 {
-                    if (point.Y >= q1 && point.Y <= q2 && point.Y <= q3 && point.Y >= q4)
+                    if (point.Y >= q1 && point.Y <= q2 && point.Y >= q3 && point.Y >= q4)
                     {
                         return true;
                     }

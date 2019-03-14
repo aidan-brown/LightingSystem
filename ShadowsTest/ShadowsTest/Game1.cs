@@ -33,7 +33,7 @@ namespace ShadowsTest
             Content.RootDirectory = "Content";
             platforms = new List<Platform>();
             lights = new List<Light>();
-            rect = new Rectangle(250, 350, 5, 5);
+            rect = new Rectangle(250, 100, 5, 5);
         }
 
         /// <summary>
@@ -100,6 +100,23 @@ namespace ShadowsTest
             foreach(Platform platform in platforms)
             {
                 platform.Update(lights);
+            }
+
+            if(Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                rect.Y--;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                rect.Y++;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                rect.X--;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                rect.X++;
             }
 
             Platform.UpdateShadows();
