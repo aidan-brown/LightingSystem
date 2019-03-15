@@ -278,5 +278,10 @@ namespace ShadowsTest
             }
             return false;
         }
+
+        public override float GetLength()
+        {
+            return length;
+        }
     }
 }

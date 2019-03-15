@@ -23,7 +23,7 @@ namespace ShadowsTest
         private Vector2 p1, p2, p1f, p2f;
 
         //Stores the length of the shadow
-        private const float Length = 250;
+        private float length = 250;
 
         //Property to get the light of the shadow
         public Light Light
@@ -43,7 +43,7 @@ namespace ShadowsTest
         /// </summary>
         /// <param name="light"></param>
         /// <param name="platform"></param>
-        public Shadow(Light light, Platform platform)
+        public Shadow(Light light, Platform platform, float length)
         {
             tri1 = new VertexPositionColor[3];
             tri2 = new VertexPositionColor[3];
@@ -51,6 +51,7 @@ namespace ShadowsTest
 
             this.light = light;
             this.platform = platform;
+            this.length = length;
 
             FindShadow();
         }
@@ -63,16 +64,16 @@ namespace ShadowsTest
             FindPoints(platform, light);
 
             tri1[0] = new VertexPositionColor(new Vector3(p1.X, p1.Y, 0), Color.Black);
-            tri1[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Transparent);
-            tri1[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Transparent);
+            tri1[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Black);
+            tri1[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
             
-            tri2[0] = new VertexPositionColor(new Vector3(p2.X, p2.Y, 0), Color.Transparent);
-            tri2[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Transparent);
-            tri2[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Transparent);
+            tri2[0] = new VertexPositionColor(new Vector3(p2.X, p2.Y, 0), Color.Black);
+            tri2[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Black);
+            tri2[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
 
             tri3[0] = new VertexPositionColor(new Vector3(p1.X, p1.Y, 0), Color.Black);
             tri3[1] = new VertexPositionColor(new Vector3(p2.X, p2.Y, 0), Color.Black);
-            tri3[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Transparent);
+            tri3[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
 
 
         }
@@ -94,7 +95,6 @@ namespace ShadowsTest
             }
 
             vertexBuffer.SetData<VertexPositionColor>(tri2);
-            graphicsDevice.SetVertexBuffer(vertexBuffer);
             foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
             {
                 effectPass.Apply();
@@ -102,7 +102,6 @@ namespace ShadowsTest
             }
 
             vertexBuffer.SetData<VertexPositionColor>(tri3);
-            graphicsDevice.SetVertexBuffer(vertexBuffer);
             foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
             {
                 effectPass.Apply();
@@ -190,11 +189,11 @@ namespace ShadowsTest
                 {
                     if (platform.MidPoint.X > light.GlobalPosition.X)
                     {
-                        orthoPoint = new Vector2((float)(platform.MidPoint.X + Length * Math.Cos(Math.Atan(1 / orthoSlope))), (float)(platform.MidPoint.Y + Length * Math.Sin(Math.Atan(1 / orthoSlope))));
+                        orthoPoint = new Vector2((float)(platform.MidPoint.X + length * Math.Cos(Math.Atan(1 / orthoSlope))), (float)(platform.MidPoint.Y + length * Math.Sin(Math.Atan(1 / orthoSlope))));
                     }
                     else
                     {
-                        orthoPoint = new Vector2((float)(platform.MidPoint.X - Length * Math.Cos(Math.Atan(1 / orthoSlope))), (float)(platform.MidPoint.Y - Length * Math.Sin(Math.Atan(1 / orthoSlope))));
+                        orthoPoint = new Vector2((float)(platform.MidPoint.X - length * Math.Cos(Math.Atan(1 / orthoSlope))), (float)(platform.MidPoint.Y - length * Math.Sin(Math.Atan(1 / orthoSlope))));
                     }
 
                     if (p1.X != light.GlobalPosition.X && p2.X != light.GlobalPosition.X)
@@ -227,15 +226,15 @@ namespace ShadowsTest
                         {
                             phiSlope = ((p1.Y - light.GlobalPosition.Y) / (p1.X - light.GlobalPosition.X));
                             alphaSlope = ((p2.Y - light.GlobalPosition.Y) / (p2.X - light.GlobalPosition.X));
-                            p1f = new Vector2((1 / phiSlope) * (p1.Y + Length - light.GlobalPosition.Y) + light.GlobalPosition.X, p1.Y + Length);
-                            p2f = new Vector2((1 / alphaSlope) * (p2.Y + Length - light.GlobalPosition.Y) + light.GlobalPosition.X, p2.Y + Length);
+                            p1f = new Vector2((1 / phiSlope) * (p1.Y + length - light.GlobalPosition.Y) + light.GlobalPosition.X, p1.Y + length);
+                            p2f = new Vector2((1 / alphaSlope) * (p2.Y + length - light.GlobalPosition.Y) + light.GlobalPosition.X, p2.Y + length);
                         }
                         else
                         {
                             phiSlope = ((p1.Y - light.GlobalPosition.Y) / (p1.X - light.GlobalPosition.X));
                             alphaSlope = ((p2.Y - light.GlobalPosition.Y) / (p2.X - light.GlobalPosition.X));
-                            p1f = new Vector2((1 / phiSlope) * (p1.Y - Length - light.GlobalPosition.Y) + light.GlobalPosition.X, p1.Y - Length);
-                            p2f = new Vector2((1 / alphaSlope) * (p2.Y - Length - light.GlobalPosition.Y) + light.GlobalPosition.X, p2.Y - Length);
+                            p1f = new Vector2((1 / phiSlope) * (p1.Y - length - light.GlobalPosition.Y) + light.GlobalPosition.X, p1.Y - length);
+                            p2f = new Vector2((1 / alphaSlope) * (p2.Y - length - light.GlobalPosition.Y) + light.GlobalPosition.X, p2.Y - length);
                         }
                     }
                     else
@@ -244,15 +243,15 @@ namespace ShadowsTest
                         {
                             phiSlope = ((p1.Y - light.GlobalPosition.Y) / (p1.X - light.GlobalPosition.X));
                             alphaSlope = ((p2.Y - light.GlobalPosition.Y) / (p2.X - light.GlobalPosition.X));
-                            p1f = new Vector2(p1.X + Length, phiSlope * (p1.X + Length - light.GlobalPosition.X) + light.GlobalPosition.Y);
-                            p2f = new Vector2(p2.X + Length, alphaSlope * (p2.X + Length - light.GlobalPosition.X) + light.GlobalPosition.Y);
+                            p1f = new Vector2(p1.X + length, phiSlope * (p1.X + length - light.GlobalPosition.X) + light.GlobalPosition.Y);
+                            p2f = new Vector2(p2.X + length, alphaSlope * (p2.X + length - light.GlobalPosition.X) + light.GlobalPosition.Y);
                         }
                         else
                         {
                             phiSlope = ((p1.Y - light.GlobalPosition.Y) / (p1.X - light.GlobalPosition.X));
                             alphaSlope = ((p2.Y - light.GlobalPosition.Y) / (p2.X - light.GlobalPosition.X));
-                            p1f = new Vector2(p1.X - Length, phiSlope * (p1.X - Length - light.GlobalPosition.X) + light.GlobalPosition.Y);
-                            p2f = new Vector2(p2.X - Length, alphaSlope * (p2.X - Length - light.GlobalPosition.X) + light.GlobalPosition.Y);
+                            p1f = new Vector2(p1.X - length, phiSlope * (p1.X - length - light.GlobalPosition.X) + light.GlobalPosition.Y);
+                            p2f = new Vector2(p2.X - length, alphaSlope * (p2.X - length - light.GlobalPosition.X) + light.GlobalPosition.Y);
                         }
                     }
                 }

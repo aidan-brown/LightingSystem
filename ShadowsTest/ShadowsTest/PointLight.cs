@@ -26,7 +26,7 @@ namespace ShadowsTest
         /// <param name="globalPos"></param>
         /// <param name="radius"></param>
         /// <param name="sprite"></param>
-        public PointLight(Vector2 globalPos, float radius, Texture2D sprite) : base(globalPos, sprite)
+        public PointLight(Vector2 globalPos, float radius, Texture2D lightMask) : base(globalPos, lightMask)
         {
             this.radius = radius;
         }
@@ -60,7 +60,10 @@ namespace ShadowsTest
         /// <param name="spriteBatch"></param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture: sprite, position: GlobalPosition, color: Color.White, scale: new Vector2(2* radius / sprite.Width, 2 * radius / sprite.Height), origin: new Vector2(sprite.Width/2, sprite.Height/2));
+            //spriteBatch.Draw(texture: sprite, position: GlobalPosition, color: Color.White, scale: new Vector2(2* radius / sprite.Width, 2 * radius / sprite.Height), origin: new Vector2(sprite.Width/2, sprite.Height/2));
+            
+            //draw light mask where there should be torches etc...
+            spriteBatch.Draw(texture: lightMask, position: GlobalPosition, color: Color.White, scale: new Vector2(2 * radius / lightMask.Width, 2 * radius / lightMask.Height), origin: new Vector2(lightMask.Width / 2, lightMask.Height / 2));
         }
 
         /// <summary>
@@ -104,6 +107,11 @@ namespace ShadowsTest
                 }
             }
             return false;
+        }
+
+        public override float GetLength()
+        {
+            return radius;
         }
     }
 }

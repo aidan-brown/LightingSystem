@@ -127,8 +127,8 @@ namespace ShadowsTest
                 {
                     if (isInLight && !DoesShadowsContainLight(light))
                     {
-                        GlobalShadows.Add(new Shadow(light, this));
-                        shadows.Add(new Shadow(light, this));
+                        GlobalShadows.Add(new Shadow(light, this, light.GetLength()));
+                        shadows.Add(new Shadow(light, this, light.GetLength()));
                     }
                 }
             }

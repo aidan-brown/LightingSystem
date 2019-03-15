@@ -25,6 +25,13 @@ namespace ShadowsTest
         Matrix projection;
         Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
 
+        public static Texture2D lightMask;
+        public static Effect effect1;
+        RenderTarget2D lightsTarget;
+        RenderTarget2D mainTarget;
+        RenderTarget2D lightsAndMainTarget;
+        RenderTarget2D background;
+
 
 
         public Game1()
@@ -61,8 +68,21 @@ namespace ShadowsTest
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            lightMask = Content.Load<Texture2D>("lightMask1");
+            effect1 = Content.Load<Effect>("lighteffect");
+            var pp = GraphicsDevice.PresentationParameters;
+            lightsTarget = new RenderTarget2D(
+            GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
+            mainTarget = new RenderTarget2D(
+            GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
+            lightsAndMainTarget = new RenderTarget2D(
+            GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
+            background = new RenderTarget2D(
+            GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight);
+
             pixel = Content.Load<Texture2D>("pixel");
-            lights.Add(new PointLight(new Vector2(0, 0), 100, Content.Load<Texture2D>("point")));
+            lights.Add(new PointLight(new Vector2(0, 0), 500, Content.Load<Texture2D>("lightMask1")));
             //lights.Add(new PointLight(new Vector2(200, 0), 100, Content.Load<Texture2D>("point")));
             for (int i = 0; i < 5; i++)
             {
@@ -133,30 +153,32 @@ namespace ShadowsTest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            basicEffect.World = Matrix.Identity;
-            basicEffect.View = Matrix.Identity;
-            basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
-
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-
             bool check = false;
 
             // TODO: Add your drawing code here
-            spriteBatch.Begin();
+            GraphicsDevice.SetRenderTarget(lightsTarget);
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
+
             foreach (Light light in lights)
             {
                 light.Draw(spriteBatch);
             }
+            spriteBatch.End();
+
+
+
+            GraphicsDevice.SetRenderTarget(mainTarget);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             foreach (Platform platform in platforms)
             {
                 platform.Draw(spriteBatch);
             }
-            foreach(Shadow shadow in Platform.GlobalShadows)
+            foreach (Shadow shadow in Platform.GlobalShadows)
             {
-                if(shadow.WithinShadow(rect))
+                if (shadow.WithinShadow(rect))
                 {
                     check = true;
                     break;
@@ -177,7 +199,7 @@ namespace ShadowsTest
                     }
                 }
             }
-            if(check)
+            if (check)
             {
                 spriteBatch.Draw(Content.Load<Texture2D>("platform"), rect, Color.White);
             }
@@ -185,7 +207,38 @@ namespace ShadowsTest
             {
                 spriteBatch.Draw(Content.Load<Texture2D>("platform"), rect, Color.Black);
             }
+
+            spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(background);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            GraphicsDevice.SetRenderTarget(lightsAndMainTarget);
+            GraphicsDevice.Clear(Color.Black);
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            effect1.Parameters["lightMask"].SetValue(lightsTarget);
+            effect1.CurrentTechnique.Passes[0].Apply();
+            spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Transparent);
+
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.Identity;
+            basicEffect.Projection = projection;
+            basicEffect.VertexColorEnabled = true;
+
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(lightsAndMainTarget, Vector2.Zero, Color.White);
             Platform.DrawShadows(basicEffect, GraphicsDevice, vertexBuffer);
+
             spriteBatch.End();
 
             base.Draw(gameTime);

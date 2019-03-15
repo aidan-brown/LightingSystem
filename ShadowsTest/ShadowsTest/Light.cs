@@ -14,7 +14,7 @@ namespace ShadowsTest
         protected Vector2 globalPosition, screenPosition;
 
         //Stores the sprite of the light
-        protected Texture2D sprite;
+        protected Texture2D lightMask;
 
         //Property of the light's global position
         public Vector2 GlobalPosition
@@ -35,7 +35,7 @@ namespace ShadowsTest
         protected Light(Vector2 gPos, Texture2D s)
         {
             globalPosition = gPos;
-            sprite = s;
+            lightMask = s;
         }
 
         /// <summary>
@@ -69,5 +69,11 @@ namespace ShadowsTest
         /// </summary>
         /// <param name="spriteBatch"></param>
         public abstract void Draw(SpriteBatch spriteBatch);
+
+        /// <summary>
+        /// Get length of the light
+        /// </summary>
+        /// <returns></returns>
+        public abstract float GetLength();
     }
 }
