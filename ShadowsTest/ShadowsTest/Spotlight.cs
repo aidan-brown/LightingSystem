@@ -49,12 +49,11 @@ namespace ShadowsTest
             get { return intercept; }
         }
 
-        public Spotlight(Vector2 init, float rot, int l, int w, Texture2D _t) : base(init)
+        public Spotlight(Vector2 init, float rot, int l, int w, Texture2D _t) : base(init, _t)
         {
             rotation = (float)(rot * (Math.PI / 180));
             length = l;
             width = w;
-            t = _t;
         }
 
         public override void Update()
@@ -260,6 +259,19 @@ namespace ShadowsTest
                 }
                 
                 if(IsWithinLight(point))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public override bool IsWithinLight(Rectangle rect)
+        {
+            Vector2[] points = { new Vector2(rect.X, rect.Y), new Vector2(rect.X + rect.Width, rect.Y), new Vector2(rect.X, rect.Y + rect.Height), new Vector2(rect.X + rect.Width, rect.Y + rect.Height) };
+            foreach (Vector2 point in points)
+            {
+                if (IsWithinLight(point))
                 {
                     return true;
                 }

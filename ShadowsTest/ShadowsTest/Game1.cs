@@ -64,9 +64,10 @@ namespace ShadowsTest
             pixel = Content.Load<Texture2D>("pixel");
             lights.Add(new PointLight(new Vector2(0, 0), 100, Content.Load<Texture2D>("point")));
             //lights.Add(new PointLight(new Vector2(200, 0), 100, Content.Load<Texture2D>("point")));
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 5; i++)
             {
-                platforms.Add(new Platform(new Rectangle(250 + i * 60, 250, 50, 50), Content.Load<Texture2D>("platform"), GraphicsDevice));
+                //platforms.Add(new Platform(new Rectangle(0 + i * 50, 400, 50, 50), Content.Load<Texture2D>("platform"), GraphicsDevice));
+                platforms.Add(new Platform(new Rectangle(100 + i * 60, 300, 25, 50), Content.Load<Texture2D>("platform"), GraphicsDevice));
             }
 
             // TODO: use this.Content to load your game content here
@@ -159,6 +160,21 @@ namespace ShadowsTest
                 {
                     check = true;
                     break;
+                }
+            }
+            if (!check)
+            {
+                foreach (Light light in lights)
+                {
+                    if (!light.IsWithinLight(rect))
+                    {
+                        check = true;
+                    }
+                    else
+                    {
+                        check = false;
+                        break;
+                    }
                 }
             }
             if(check)

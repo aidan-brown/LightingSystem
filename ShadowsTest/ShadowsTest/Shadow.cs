@@ -10,17 +10,39 @@ namespace ShadowsTest
 {
     class Shadow
     {
+        // Stores the light that this shadow is attached to
         private Light light;
+
+        //Stores the platform this shadow is attached to
         private Platform platform;
+
+        //Stores the verticies of the triangles that is used to draw the shadow
         private VertexPositionColor[] tri1, tri2, tri3;
+
+        //Stores each of the verticies of the shadow
         private Vector2 p1, p2, p1f, p2f;
+
+        //Stores the length of the shadow
         private const float Length = 250;
 
+        //Property to get the light of the shadow
         public Light Light
         {
             get { return light; }
         }
 
+        //Property to get the platform of the shadow
+        public Platform Platform
+        {
+            get { return platform; }
+        }
+
+
+        /// <summary>
+        /// Constructs the shadow by storing the light and platform and Finds the points of the shadow
+        /// </summary>
+        /// <param name="light"></param>
+        /// <param name="platform"></param>
         public Shadow(Light light, Platform platform)
         {
             tri1 = new VertexPositionColor[3];
@@ -33,6 +55,9 @@ namespace ShadowsTest
             FindShadow();
         }
 
+        /// <summary>
+        /// Finds the points of the shadow relative the light and stores the colors and verticies in each of the triangles
+        /// </summary>
         public void FindShadow()
         {
             FindPoints(platform, light);
@@ -52,6 +77,12 @@ namespace ShadowsTest
 
         }
 
+        /// <summary>
+        /// Draws each of the three triangles of the shadow
+        /// </summary>
+        /// <param name="basicEffect"></param>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="vertexBuffer"></param>
         public void Draw(BasicEffect basicEffect, GraphicsDevice graphicsDevice, VertexBuffer vertexBuffer)
         {
             vertexBuffer.SetData<VertexPositionColor>(tri1);
@@ -79,6 +110,11 @@ namespace ShadowsTest
             }
         }
 
+        /// <summary>
+        /// Finds all four vertices of the shadow based on the light and platform
+        /// </summary>
+        /// <param name="platform"></param>
+        /// <param name="light"></param>
         private void FindPoints(Platform platform, Light light)
         {
             if (light != null)
@@ -223,6 +259,13 @@ namespace ShadowsTest
             }
         }
 
+        /// <summary>
+        /// Finds the furthest point from the line that runs through the platform
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="light"></param>
+        /// <param name="platform"></param>
+        /// <returns></returns>
         private Vector2 FindFurthestPoint(List<Vector2> points, Light light, Platform platform)
         {
             float maxValue = 0;
@@ -244,6 +287,12 @@ namespace ShadowsTest
             return maxPoint;
         }
 
+        /// <summary>
+        /// Finds the angle of the line from point 1 to point 2
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
         public static float AngleFromPointToPoint(Vector2 p1, Vector2 p2)
         {
             if (p1.X < p2.X)
@@ -253,6 +302,11 @@ namespace ShadowsTest
             return (float)(Math.Atan((p1.Y - p2.Y) / (p1.X - p2.X)) + Math.PI);
         }
 
+        /// <summary>
+        /// Returns true if the point is within the shadow
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         public bool WithinShadow(Vector2 point)
         {
             float q1 = ((p1.Y - p2.Y) / (p1.X - p2.X)) * (point.X - p1.X) + p1.Y;
@@ -311,6 +365,11 @@ namespace ShadowsTest
             return false;
         }
 
+        /// <summary>
+        /// Returns true if one of the four vertices of the rectangle is within the shadow
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <returns></returns>
         public bool WithinShadow(Rectangle rectangle)
         {
             Vector2[] points = { new Vector2(rectangle.Location.X, rectangle.Location.Y), new Vector2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y), new Vector2(rectangle.Location.X, rectangle.Location.Y + rectangle.Height), new Vector2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y + rectangle.Height) };
