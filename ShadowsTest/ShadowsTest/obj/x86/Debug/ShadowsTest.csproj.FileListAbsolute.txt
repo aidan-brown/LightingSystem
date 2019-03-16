@@ -104,3 +104,6 @@ C:\Users\Aidan\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\obj\x86\De
 C:\Users\Aidan's_9th_Laptop\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\lighteffect.xnb
 C:\Users\Aidan's_9th_Laptop\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\lightMask.xnb
 C:\Users\Aidan's_9th_Laptop\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\lightMask1.xnb
+C:\Users\Aidan\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\lighteffect.xnb
+C:\Users\Aidan\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\lightMask.xnb
+C:\Users\Aidan\Documents\GDAPS\LightingSystem\ShadowsTest\ShadowsTest\bin\Windows\x86\Debug\Content\lightMask1.xnb

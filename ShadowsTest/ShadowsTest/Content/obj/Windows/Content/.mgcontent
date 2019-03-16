@@ -4,13 +4,13 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/lighteffect.fx</File>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/lightMask.png</File>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/lightMask1.png</File>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/pixel.png</File>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/platform.png</File>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/point.png</File>
-    <File>C:/Users/Aidan's_9th_Laptop/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/spot.png</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/lighteffect.fx</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/lightMask.png</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/lightMask1.png</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/pixel.png</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/platform.png</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/point.png</File>
+    <File>C:/Users/Aidan/Documents/GDAPS/LightingSystem/ShadowsTest/ShadowsTest/Content/spot.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

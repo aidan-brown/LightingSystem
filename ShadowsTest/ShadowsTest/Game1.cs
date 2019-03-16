@@ -56,7 +56,7 @@ namespace ShadowsTest
             base.Initialize();
 
             basicEffect = new BasicEffect(GraphicsDevice);
-            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 4, BufferUsage.WriteOnly);
+            vertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColor), 3, BufferUsage.WriteOnly);
             projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, 1);
         }
 
@@ -171,7 +171,7 @@ namespace ShadowsTest
             GraphicsDevice.SetRenderTarget(mainTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+            spriteBatch.Begin();
             foreach (Platform platform in platforms)
             {
                 platform.Draw(spriteBatch);
@@ -207,11 +207,8 @@ namespace ShadowsTest
             {
                 spriteBatch.Draw(Content.Load<Texture2D>("platform"), rect, Color.Black);
             }
-
+            
             spriteBatch.End();
-
-            GraphicsDevice.SetRenderTarget(background);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             GraphicsDevice.SetRenderTarget(lightsAndMainTarget);
             GraphicsDevice.Clear(Color.Black);
@@ -225,6 +222,11 @@ namespace ShadowsTest
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Transparent);
 
+            spriteBatch.Begin();
+            spriteBatch.Draw(lightsAndMainTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+
             basicEffect.World = Matrix.Identity;
             basicEffect.View = Matrix.Identity;
             basicEffect.Projection = projection;
@@ -234,12 +236,8 @@ namespace ShadowsTest
             rasterizerState.CullMode = CullMode.None;
             GraphicsDevice.RasterizerState = rasterizerState;
 
-            spriteBatch.Begin();
+            Shadow.DrawShadows(basicEffect, GraphicsDevice, vertexBuffer);
 
-            spriteBatch.Draw(lightsAndMainTarget, Vector2.Zero, Color.White);
-            Platform.DrawShadows(basicEffect, GraphicsDevice, vertexBuffer);
-
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }

@@ -60,9 +60,6 @@ namespace ShadowsTest
         /// <param name="spriteBatch"></param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //spriteBatch.Draw(texture: sprite, position: GlobalPosition, color: Color.White, scale: new Vector2(2* radius / sprite.Width, 2 * radius / sprite.Height), origin: new Vector2(sprite.Width/2, sprite.Height/2));
-            
-            //draw light mask where there should be torches etc...
             spriteBatch.Draw(texture: lightMask, position: GlobalPosition, color: Color.White, scale: new Vector2(2 * radius / lightMask.Width, 2 * radius / lightMask.Height), origin: new Vector2(lightMask.Width / 2, lightMask.Height / 2));
         }
 

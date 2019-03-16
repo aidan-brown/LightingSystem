@@ -246,18 +246,6 @@ namespace ShadowsTest
             }
         }
 
-        /// <summary>
-        /// Draws all the shadows within the global shadow list
-        /// </summary>
-        /// <param name="basicEffect"></param>
-        /// <param name="graphicsDevice"></param>
-        /// <param name="vertexBuffer"></param>
-        public static void DrawShadows(BasicEffect basicEffect, GraphicsDevice graphicsDevice, VertexBuffer vertexBuffer)
-        {
-            foreach (Shadow shadow in GlobalShadows)
-            {
-                shadow.Draw(basicEffect, graphicsDevice, vertexBuffer);
-            }
-        }
+        
     }
 }

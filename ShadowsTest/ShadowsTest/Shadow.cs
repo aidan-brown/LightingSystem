@@ -17,13 +17,16 @@ namespace ShadowsTest
         private Platform platform;
 
         //Stores the verticies of the triangles that is used to draw the shadow
-        private VertexPositionColor[] tri1, tri2, tri3;
+        private VertexPositionColor[] tri, tri2, tri3, tri4;
 
         //Stores each of the verticies of the shadow
         private Vector2 p1, p2, p1f, p2f;
 
         //Stores the length of the shadow
         private float length = 250;
+
+
+        int[] ind;
 
         //Property to get the light of the shadow
         public Light Light
@@ -45,9 +48,10 @@ namespace ShadowsTest
         /// <param name="platform"></param>
         public Shadow(Light light, Platform platform, float length)
         {
-            tri1 = new VertexPositionColor[3];
+            tri = new VertexPositionColor[3];
             tri2 = new VertexPositionColor[3];
             tri3 = new VertexPositionColor[3];
+            tri4 = new VertexPositionColor[3];
 
             this.light = light;
             this.platform = platform;
@@ -63,19 +67,13 @@ namespace ShadowsTest
         {
             FindPoints(platform, light);
 
-            tri1[0] = new VertexPositionColor(new Vector3(p1.X, p1.Y, 0), Color.Black);
-            tri1[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Black);
-            tri1[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
+            tri[0] = new VertexPositionColor(new Vector3(p1.X, p1.Y, 0), Color.Black);
+            tri[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Black);
+            tri[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
             
-            tri2[0] = new VertexPositionColor(new Vector3(p2.X, p2.Y, 0), Color.Black);
-            tri2[1] = new VertexPositionColor(new Vector3(p1f.X, p1f.Y, 0), Color.Black);
-            tri2[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
-
-            tri3[0] = new VertexPositionColor(new Vector3(p1.X, p1.Y, 0), Color.Black);
-            tri3[1] = new VertexPositionColor(new Vector3(p2.X, p2.Y, 0), Color.Black);
-            tri3[2] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
-
-
+            tri2[0] = new VertexPositionColor(new Vector3(p2f.X, p2f.Y, 0), Color.Black);
+            tri2[1] = new VertexPositionColor(new Vector3(p1.X, p1.Y, 0), Color.Black);
+            tri2[2] = new VertexPositionColor(new Vector3(p2.X, p2.Y, 0), Color.Black);
         }
 
         /// <summary>
@@ -86,7 +84,7 @@ namespace ShadowsTest
         /// <param name="vertexBuffer"></param>
         public void Draw(BasicEffect basicEffect, GraphicsDevice graphicsDevice, VertexBuffer vertexBuffer)
         {
-            vertexBuffer.SetData<VertexPositionColor>(tri1);
+            vertexBuffer.SetData<VertexPositionColor>(tri);
             graphicsDevice.SetVertexBuffer(vertexBuffer);
             foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
             {
@@ -95,13 +93,6 @@ namespace ShadowsTest
             }
 
             vertexBuffer.SetData<VertexPositionColor>(tri2);
-            foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
-            {
-                effectPass.Apply();
-                graphicsDevice.DrawPrimitives(PrimitiveType.TriangleList, 0, 1);
-            }
-
-            vertexBuffer.SetData<VertexPositionColor>(tri3);
             foreach (EffectPass effectPass in basicEffect.CurrentTechnique.Passes)
             {
                 effectPass.Apply();
@@ -145,28 +136,28 @@ namespace ShadowsTest
                 {
                     if (platform.MidPoint.X + offset >= light.GlobalPosition.X && platform.MidPoint.X - offset <= light.GlobalPosition.X)
                     {
-                        if (platform.MidPoint.Y > light.GlobalPosition.Y)
+                        if (platform.Rect.Width % 2 == 0)
                         {
-                            p1 = platform.PointNW;
-                            p2 = platform.PointNE;
+                            p1 = new Vector2(platform.MidPoint.X - (platform.Rect.Width / 2), platform.MidPoint.Y);
+                            p2 = new Vector2(platform.MidPoint.X + (platform.Rect.Width / 2), platform.MidPoint.Y);
                         }
                         else
                         {
-                            p1 = platform.PointSW;
-                            p2 = platform.PointSE;
+                            p1 = new Vector2(platform.MidPoint.X - (platform.Rect.Width / 2) - 1, platform.MidPoint.Y);
+                            p2 = new Vector2(platform.MidPoint.X + (platform.Rect.Width / 2) + 1, platform.MidPoint.Y);
                         }
                     }
                     else
                     {
-                        if (platform.MidPoint.X > light.GlobalPosition.X)
+                        if (platform.Rect.Height % 2 == 0)
                         {
-                            p1 = platform.PointNW;
-                            p2 = platform.PointSW;
+                            p1 = new Vector2(platform.MidPoint.X, platform.MidPoint.Y + (platform.Rect.Height / 2));
+                            p2 = new Vector2(platform.MidPoint.X, platform.MidPoint.Y - (platform.Rect.Height / 2));
                         }
                         else
                         {
-                            p1 = platform.PointNE;
-                            p2 = platform.PointSE;
+                            p1 = new Vector2(platform.MidPoint.X, platform.MidPoint.Y + (platform.Rect.Height / 2) + 1);
+                            p2 = new Vector2(platform.MidPoint.X, platform.MidPoint.Y - (platform.Rect.Height / 2) - 1);
                         }
                     }
                 }
@@ -381,6 +372,20 @@ namespace ShadowsTest
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Draws all the shadows within the global shadow list
+        /// </summary>
+        /// <param name="basicEffect"></param>
+        /// <param name="graphicsDevice"></param>
+        /// <param name="vertexBuffer"></param>
+        public static void DrawShadows(BasicEffect basicEffect, GraphicsDevice graphicsDevice, VertexBuffer vertexBuffer)
+        {
+            foreach (Shadow shadow in Platform.GlobalShadows)
+            {
+                shadow.Draw(basicEffect, graphicsDevice, vertexBuffer);
+            }
         }
     }
 }
