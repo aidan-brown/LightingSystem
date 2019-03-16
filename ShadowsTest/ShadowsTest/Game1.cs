@@ -167,9 +167,35 @@ namespace ShadowsTest
             spriteBatch.End();
 
 
-
             GraphicsDevice.SetRenderTarget(mainTarget);
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            GraphicsDevice.SetRenderTarget(lightsAndMainTarget);
+            GraphicsDevice.Clear(Color.Black);
+
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            effect1.Parameters["lightMask"].SetValue(lightsTarget);
+            effect1.CurrentTechnique.Passes[0].Apply();
+            spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.Transparent);
+
+            spriteBatch.Begin();
+            spriteBatch.Draw(lightsAndMainTarget, Vector2.Zero, Color.White);
+            spriteBatch.End();
+
+            basicEffect.World = Matrix.Identity;
+            basicEffect.View = Matrix.Identity;
+            basicEffect.Projection = projection;
+            basicEffect.VertexColorEnabled = true;
+
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            GraphicsDevice.RasterizerState = rasterizerState;
+
+            Shadow.DrawShadows(basicEffect, GraphicsDevice, vertexBuffer);
 
             spriteBatch.Begin();
             foreach (Platform platform in platforms)
@@ -207,36 +233,7 @@ namespace ShadowsTest
             {
                 spriteBatch.Draw(Content.Load<Texture2D>("platform"), rect, Color.Black);
             }
-            
             spriteBatch.End();
-
-            GraphicsDevice.SetRenderTarget(lightsAndMainTarget);
-            GraphicsDevice.Clear(Color.Black);
-
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-            effect1.Parameters["lightMask"].SetValue(lightsTarget);
-            effect1.CurrentTechnique.Passes[0].Apply();
-            spriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
-            spriteBatch.End();
-
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.Transparent);
-
-            spriteBatch.Begin();
-            spriteBatch.Draw(lightsAndMainTarget, Vector2.Zero, Color.White);
-            spriteBatch.End();
-
-
-            basicEffect.World = Matrix.Identity;
-            basicEffect.View = Matrix.Identity;
-            basicEffect.Projection = projection;
-            basicEffect.VertexColorEnabled = true;
-
-            RasterizerState rasterizerState = new RasterizerState();
-            rasterizerState.CullMode = CullMode.None;
-            GraphicsDevice.RasterizerState = rasterizerState;
-
-            Shadow.DrawShadows(basicEffect, GraphicsDevice, vertexBuffer);
 
 
             base.Draw(gameTime);
